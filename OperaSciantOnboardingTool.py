@@ -27,8 +27,9 @@ if uploaded_files:
         # Find the type of EXPORT_HEADER (the tag name under root)
         export_header_type = root.find('.//EXPORT_HEADER').tag
         
-        # Store the data in a dictionary
+        # Store the data in a dictionary, including the file name
         data.append({
+            'Source File': uploaded_file.name,
             'BUSINESS_DATE': business_date,
             'GENERATION_TIME': generation_time,
             'FROM_DATE': from_date,
