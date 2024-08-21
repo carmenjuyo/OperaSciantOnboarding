@@ -40,8 +40,11 @@ if uploaded_files:
     # Convert the list of dictionaries to a DataFrame
     df = pd.DataFrame(data)
 
-    # Display the DataFrame in Streamlit
+    # Ensure the columns are in a fixed order
+    df = df[['Source File', 'BUSINESS_DATE', 'GENERATION_TIME', 'FROM_DATE', 'TO_DATE', 'EXPORT_HEADER_TYPE']]
+
+    # Display the DataFrame in Streamlit with a wide frame
     st.write("Extracted Data:")
-    st.dataframe(df)
+    st.dataframe(df, use_container_width=True)
 else:
     st.info("Please upload XML files to extract and display data.")
