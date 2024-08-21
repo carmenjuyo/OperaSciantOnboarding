@@ -31,13 +31,20 @@ if uploaded_files:
         from_date = root.findtext('.//FROM_DATE')
         to_date = root.findtext('.//TO_DATE')
         
-        # Find the <EXPORT_HEADER> element and extract the first 5 characters of the next element's tag after <EXPORT_HEADER>
+        # Find the <EXPORT_HEADER> element
         export_header_element = root.find('.//EXPORT_HEADER')
-        next_element_text = ""
+        first_5_characters = ""
+        
+        # Find the first 5 characters of the text following the <EXPORT_HEADER> tag
         if export_header_element is not None:
-            next_sibling = export_header_element.getnext()  # Get the next element after <EXPORT_HEADER>
-            if next_sibling is not None and next_sibling.text:
-                next_element_text = next_sibling.text.strip()[:5]  # Extract the first 5 characters of the next row's text
+            parent = export_header_element.getparent()  # Get the parent of <EXPORT_HEADER>
+            children = list(parent)  # List all children of the parent
+            index = children.index(export_header_element)
+            
+            # Check if there's a next sibling element
+            if index + 1 < len(children):
+                next_element = children[index + 1]
+                first_5_characters = (next_element.text or '').strip()[:5]  # Get the first 5 characters of the next element's text
 
         # Store the data in a dictionary, including the file name and first 5 characters after <EXPORT_HEADER>
         data.append({
@@ -46,8 +53,8 @@ if uploaded_files:
             'GENERATION_TIME': generation_time,
             'FROM_DATE': from_date,
             'TO_DATE': to_date,
-            'EXPORT_HEADER_TYPE': export_header_element.tag,
-            'First 5 Chars After EXPORT_HEADER': next_element_text
+            'EXPORT_HEADER_TYPE': export_header_element.tag if export_header_element is not None else '',
+            'First 5 Chars After EXPORT_HEADER': first_5_characters
         })
 
     # Convert the list of dictionaries to a DataFrame
