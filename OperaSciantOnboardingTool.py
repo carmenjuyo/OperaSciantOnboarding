@@ -31,21 +31,21 @@ if uploaded_files:
         from_date = root.findtext('.//FROM_DATE')
         to_date = root.findtext('.//TO_DATE')
         
-        # Find the <EXPORT_HEADER> element
-        export_header_element = root.find('.//EXPORT_HEADER')
+        # Initialize variables
+        export_header_found = False
         first_5_characters = ""
+        next_tag_type = ""
         
-        # Find the first 5 characters of the text following the <EXPORT_HEADER> tag
-        if export_header_element is not None:
-            parent = export_header_element.getparent()  # Get the parent of <EXPORT_HEADER>
-            children = list(parent)  # List all children of the parent
-            index = children.index(export_header_element)
-            
-            # Check if there's a next sibling element
-            if index + 1 < len(children):
-                next_element = children[index + 1]
-                first_5_characters = (next_element.text or '').strip()[:5]  # Get the first 5 characters of the next element's text
-
+        # Iterate over all elements to find <EXPORT_HEADER>
+        for elem in root.iter():
+            if export_header_found:
+                # After finding <EXPORT_HEADER>, get the first 5 characters of the next element's attributes
+                first_5_characters = str(elem.attrib)[:5]  # Extract the first 5 characters of the next element's attributes
+                next_tag_type = elem.tag  # Get the tag type (e.g., <RC>)
+                break
+            if elem.tag == 'EXPORT_HEADER':
+                export_header_found = True
+        
         # Store the data in a dictionary, including the file name and first 5 characters after <EXPORT_HEADER>
         data.append({
             'Source File': uploaded_file.name,
@@ -53,7 +53,8 @@ if uploaded_files:
             'GENERATION_TIME': generation_time,
             'FROM_DATE': from_date,
             'TO_DATE': to_date,
-            'EXPORT_HEADER_TYPE': export_header_element.tag if export_header_element is not None else '',
+            'EXPORT_HEADER_TYPE': 'EXPORT_HEADER',
+            'Next Tag Type': next_tag_type,
             'First 5 Chars After EXPORT_HEADER': first_5_characters
         })
 
@@ -61,7 +62,7 @@ if uploaded_files:
     df = pd.DataFrame(data)
 
     # Ensure the columns are in a fixed order
-    df = df[['Source File', 'BUSINESS_DATE', 'GENERATION_TIME', 'FROM_DATE', 'TO_DATE', 'EXPORT_HEADER_TYPE', 'First 5 Chars After EXPORT_HEADER']]
+    df = df[['Source File', 'BUSINESS_DATE', 'GENERATION_TIME', 'FROM_DATE', 'TO_DATE', 'EXPORT_HEADER_TYPE', 'Next Tag Type', 'First 5 Chars After EXPORT_HEADER']]
 
     # Display the DataFrame in Streamlit with a wide frame
     st.write("Extracted Data:")
