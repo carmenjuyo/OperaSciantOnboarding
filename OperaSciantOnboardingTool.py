@@ -8,6 +8,10 @@ st.set_page_config(layout="wide")
 # Streamlit app title
 st.title("XML Files Data Extractor")
 
+# Display max upload size info (assumed 1000 MB)
+max_upload_size_mb = 1000  # This should match the value in your config.toml
+st.info(f"Maximum upload size per file: {max_upload_size_mb} MB")
+
 # File uploader
 uploaded_files = st.file_uploader("Upload XML files", accept_multiple_files=True, type="xml")
 
