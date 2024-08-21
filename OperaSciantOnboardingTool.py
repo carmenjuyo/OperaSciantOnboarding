@@ -31,23 +31,23 @@ if uploaded_files:
         from_date = root.findtext('.//FROM_DATE')
         to_date = root.findtext('.//TO_DATE')
         
-        # Find the type of EXPORT_HEADER (the tag name under root)
+        # Find the <EXPORT_HEADER> element and extract the first 5 characters of the next element's tag after <EXPORT_HEADER>
         export_header_element = root.find('.//EXPORT_HEADER')
-        export_header_type = export_header_element.tag
-        
-        # Extract the first 5 characters following the <EXPORT_HEADER> tag
-        following_text = export_header_element.tail.strip() if export_header_element.tail else ""
-        first_5_characters = following_text[:5]
-        
-        # Store the data in a dictionary, including the file name and first 5 characters
+        next_element_text = ""
+        if export_header_element is not None:
+            next_sibling = export_header_element.getnext()  # Get the next element after <EXPORT_HEADER>
+            if next_sibling is not None and next_sibling.text:
+                next_element_text = next_sibling.text.strip()[:5]  # Extract the first 5 characters of the next row's text
+
+        # Store the data in a dictionary, including the file name and first 5 characters after <EXPORT_HEADER>
         data.append({
             'Source File': uploaded_file.name,
             'BUSINESS_DATE': business_date,
             'GENERATION_TIME': generation_time,
             'FROM_DATE': from_date,
             'TO_DATE': to_date,
-            'EXPORT_HEADER_TYPE': export_header_type,
-            'First 5 Chars After EXPORT_HEADER': first_5_characters
+            'EXPORT_HEADER_TYPE': export_header_element.tag,
+            'First 5 Chars After EXPORT_HEADER': next_element_text
         })
 
     # Convert the list of dictionaries to a DataFrame
