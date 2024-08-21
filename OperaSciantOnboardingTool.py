@@ -33,16 +33,20 @@ if uploaded_files:
         
         # Initialize variables
         next_tag_type = ""
-        export_header_found = False
-
-        # Iterate through the elements after the closing </EXPORT_HEADER>
-        for elem in root.iter():
-            if export_header_found and elem.tag != 'EXPORT_HEADER':
-                # Get the tag type of the first element after </EXPORT_HEADER>
-                next_tag_type = elem.tag
-                break
-            if elem.tag == 'EXPORT_HEADER':
-                export_header_found = True
+        
+        # Find the <EXPORT_HEADER> element
+        export_header_element = root.find('.//EXPORT_HEADER')
+        
+        # Now we need to find the first tag that follows the closing </EXPORT_HEADER>
+        if export_header_element is not None:
+            found_export_header = False
+            for elem in root:
+                if elem.tag == 'EXPORT_HEADER':
+                    found_export_header = True
+                    continue
+                if found_export_header:
+                    next_tag_type = elem.tag
+                    break
         
         # Store the data in a dictionary, including the file name and the next tag type after </EXPORT_HEADER>
         data.append({
