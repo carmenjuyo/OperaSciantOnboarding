@@ -32,17 +32,16 @@ if uploaded_files:
         to_date = root.findtext('.//TO_DATE')
         
         # Initialize variables
-        export_header_found = False
         next_tag_type = ""
         
-        # Iterate over all elements to find <EXPORT_HEADER>
-        for elem in root.iter():
-            if export_header_found:
-                # After finding <EXPORT_HEADER>, get the tag type of the next element (e.g., <RC>, <RH>)
-                next_tag_type = elem.tag  # Get the tag type (e.g., <RC>, <RH>)
+        # Find the <EXPORT_HEADER> element
+        export_header_element = root.find('.//EXPORT_HEADER')
+        
+        # Find the next element after <EXPORT_HEADER>
+        if export_header_element is not None:
+            for elem in export_header_element.itersiblings():
+                next_tag_type = elem.tag  # Get the tag name (e.g., <RC>)
                 break
-            if elem.tag == 'EXPORT_HEADER':
-                export_header_found = True
         
         # Store the data in a dictionary, including the file name and the next tag type after <EXPORT_HEADER>
         data.append({
@@ -57,6 +56,10 @@ if uploaded_files:
 
     # Convert the list of dictionaries to a DataFrame
     df = pd.DataFrame(data)
+
+    # Sort the DataFrame by FROM_DATE column
+    df['FROM_DATE'] = pd.to_datetime(df['FROM_DATE'])  # Ensure FROM_DATE is in datetime format
+    df = df.sort_values(by='FROM_DATE')
 
     # Ensure the columns are in a fixed order
     df = df[['Source File', 'BUSINESS_DATE', 'GENERATION_TIME', 'FROM_DATE', 'TO_DATE', 'EXPORT_HEADER_TYPE', 'Next Tag Type']]
