@@ -66,7 +66,7 @@ if uploaded_files:
     df = df.sort_values(by='FROM_DATE')
 
     # Ensure the columns are in a fixed order
-    df = df[['Source File', 'BUSINESS_DATE', 'GENERATION_TIME', 'FROM_DATE', 'TO_DATE', 'EXPORT_HEADER_TYPE', 'Next Tag Type']]
+    df = df[['Source File', 'BUSINESS_DATE', 'GENERATION_TIME', 'FROM_DATE', 'TO_DATE', 'Extract Type']]
 
     # Display the DataFrame in Streamlit with a wide frame
     st.write("Extracted Data:")
