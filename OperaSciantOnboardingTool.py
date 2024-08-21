@@ -2,6 +2,9 @@ import xml.etree.ElementTree as ET
 import pandas as pd
 import streamlit as st
 
+# Set Streamlit page configuration to wide mode
+st.set_page_config(layout="wide")
+
 # Streamlit app title
 st.title("XML Files Data Extractor")
 
