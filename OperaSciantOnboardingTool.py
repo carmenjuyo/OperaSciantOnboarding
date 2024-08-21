@@ -55,8 +55,7 @@ if uploaded_files:
             'GENERATION_TIME': generation_time,
             'FROM_DATE': from_date,
             'TO_DATE': to_date,
-            'EXPORT_HEADER_TYPE': 'EXPORT_HEADER',
-            'Next Tag Type': next_tag_type
+            'Extract Type': next_tag_type
         })
 
     # Convert the list of dictionaries to a DataFrame
