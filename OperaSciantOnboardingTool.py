@@ -33,15 +33,16 @@ if uploaded_files:
         
         # Initialize variables
         next_tag_type = ""
-        
-        # Find the <EXPORT_HEADER> element
-        export_header_element = root.find('.//EXPORT_HEADER')
-        
-        # Find the next element after <EXPORT_HEADER>
-        if export_header_element is not None:
-            for elem in export_header_element.itersiblings():
-                next_tag_type = elem.tag  # Get the tag name (e.g., <RC>)
+        export_header_found = False
+
+        # Traverse the XML to find the next tag after <EXPORT_HEADER>
+        for elem in root.iter():
+            if export_header_found:
+                # Get the tag type of the next element (e.g., <RC>)
+                next_tag_type = elem.tag
                 break
+            if elem.tag == 'EXPORT_HEADER':
+                export_header_found = True
         
         # Store the data in a dictionary, including the file name and the next tag type after <EXPORT_HEADER>
         data.append({
